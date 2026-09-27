@@ -1,0 +1,74 @@
+[
+  {
+    "id": "1",
+    "slug": "serum-eclat-vitamine-c",
+    "name": "Sérum éclat vitamine C",
+    "description": "Sérum concentré pour un teint lumineux et uniforme. Formule légère, adaptée à tous types de peau.",
+    "priceUsdCents": 3200,
+    "price": 32,
+    "category": "Soin visage",
+    "image": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80",
+    "featured": true,
+    "stock": 22
+  },
+  {
+    "id": "2",
+    "slug": "palette-nude-divay",
+    "name": "Palette Nude DIVAY",
+    "description": "Six teintes mates et nacrées pour un maquillage naturel ou soirée. Pigments longue tenue.",
+    "priceUsdCents": 4500,
+    "price": 45,
+    "category": "Maquillage",
+    "image": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=80",
+    "featured": true,
+    "stock": 18
+  },
+  {
+    "id": "3",
+    "slug": "huile-capillaire-argan",
+    "name": "Huile capillaire argan",
+    "description": "Nourrit et fait briller sans effet gras. Parfum délicat, flacon pompe 100 ml.",
+    "priceUsdCents": 2800,
+    "price": 28,
+    "category": "Cheveux",
+    "image": "https://images.unsplash.com/photo-1608248543803-ba4f4c4aeaeb?w=800&q=80",
+    "featured": true,
+    "stock": 30
+  },
+  {
+    "id": "4",
+    "slug": "mascara-volume-intense",
+    "name": "Mascara volume intense",
+    "description": "Cils plus fournis dès la première passe. Résistant à l'eau, démaquillage doux.",
+    "priceUsdCents": 2200,
+    "price": 22,
+    "category": "Maquillage",
+    "image": "https://images.unsplash.com/photo-1631730486572-074d9056cf6c?w=800&q=80",
+    "featured": false,
+    "stock": 40
+  },
+  {
+    "id": "5",
+    "slug": "creme-hydratante-karite",
+    "name": "Crème hydratante karité",
+    "description": "Texture riche, beurre de karité et aloe. Idéale peaux sèches et normales.",
+    "priceUsdCents": 2600,
+    "price": 26,
+    "category": "Soin visage",
+    "image": "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80",
+    "featured": false,
+    "stock": 22
+  },
+  {
+    "id": "6",
+    "slug": "rouge-a-levres-velours",
+    "name": "Rouge à lèvres velours",
+    "description": "Fini velours confortable, tenue 8 h. Teinte rose brique signature DIVAY.",
+    "priceUsdCents": 2400,
+    "price": 24,
+    "category": "Maquillage",
+    "image": "https://images.unsplash.com/photo-1586495777744-4413d210d7c8?w=800&q=80",
+    "featured": false,
+    "stock": 35
+  }
+]

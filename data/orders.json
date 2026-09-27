@@ -1,0 +1,56 @@
+[
+  {
+    "id": "edc59b98-13a0-418f-b2cb-698de3cdd398",
+    "createdAt": "2026-09-20T19:00:37.500Z",
+    "updatedAt": "2026-09-20T19:00:37.500Z",
+    "paymentMethod": "cod",
+    "status": "pending",
+    "customer": {
+      "name": "Landry",
+      "email": "jeremiedjoko@gmail.com",
+      "phone": "0146941609",
+      "address": "BENIN",
+      "city": "COTONOU",
+      "postalCode": "77"
+    },
+    "lines": [
+      {
+        "productId": "1",
+        "name": "Sérum éclat vitamine C",
+        "quantity": 1,
+        "priceUsdCents": 3200,
+        "unitMinor": 3200
+      }
+    ],
+    "currency": "USD",
+    "totalMinor": 3200,
+    "userId": "5caf5a6f-f996-40af-978c-4052243fd8fd"
+  },
+  {
+    "id": "0069d8d7-cb26-4929-9d08-426255dbb5d8",
+    "createdAt": "2026-09-20T16:46:59.369Z",
+    "updatedAt": "2026-09-20T16:46:59.369Z",
+    "paymentMethod": "cod",
+    "status": "pending",
+    "customer": {
+      "name": "Landry",
+      "email": "jeremiedjoko@gmail.com",
+      "phone": "0146941609",
+      "address": "BENIN",
+      "city": "COTONOU",
+      "postalCode": "77"
+    },
+    "lines": [
+      {
+        "productId": "1",
+        "name": "Sérum éclat vitamine C",
+        "quantity": 1,
+        "priceUsdCents": 3200,
+        "unitMinor": 3200
+      }
+    ],
+    "currency": "USD",
+    "totalMinor": 3200,
+    "userId": "df068140-4d3f-47e5-8135-e34094549804"
+  }
+]
