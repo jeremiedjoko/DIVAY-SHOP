@@ -63,7 +63,7 @@ export async function verifyUserPassword(
   password: string,
 ): Promise<User | null> {
   const user = await findUserByEmail(email);
-  if (!user) return null;
+  if (!user || !user.passwordHash) return null;
   const ok = await bcrypt.compare(password, user.passwordHash);
   return ok ? user : null;
 }

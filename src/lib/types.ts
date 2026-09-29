@@ -39,6 +39,9 @@ export type OrderCustomer = {
 export type PendingCheckout = {
   id?: string;
   createdAt?: string;
+  currency?: ShopCurrency;
+  customer?: OrderCustomer;
+  userId?: string;
   items: {
     productId: string;
     slug: string;

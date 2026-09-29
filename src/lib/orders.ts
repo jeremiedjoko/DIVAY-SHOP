@@ -21,11 +21,11 @@ export async function saveOrder(order: Order): Promise<void> {
   await fs.writeFile(ORDERS_PATH, JSON.stringify(orders, null, 2), "utf-8");
 }
 
-export async function findOrderForTracking(id: string) {
+export async function findOrderForTracking(id: string, email: string) {
   await ensureOrdersFile();
   const raw = await fs.readFile(ORDERS_PATH, "utf-8");
   const orders = JSON.parse(raw) as Order[];
-  return orders.find(o => o.id === id);
+  return orders.find((o) => o.id === id && o.customer?.email.toLowerCase() === email.toLowerCase());
 }
 
 export async function getOrderByStripeSession(sessionId: string) {

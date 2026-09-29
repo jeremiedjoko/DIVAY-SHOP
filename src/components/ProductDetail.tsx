@@ -66,7 +66,7 @@ export function ProductDetail({ product, related }: Props) {
             </p>
             <h1 className="mt-2 font-serif text-4xl text-stone-900">{product.name}</h1>
             <p className="mt-4 text-3xl font-bold text-stone-900">
-              <Price priceUsdCents={product.priceUsdCents} />
+              <Price priceUsdCents={product.priceCents} />
             </p>
           </div>
 
@@ -88,7 +88,7 @@ export function ProductDetail({ product, related }: Props) {
                     productId: product.id,
                     slug: product.slug,
                     name: product.name,
-                    priceUsdCents: product.priceUsdCents,
+                    priceCents: product.priceCents,
                     image: product.image,
                     quantity: 1,
                   }]);
