@@ -1,98 +1,111 @@
+import { promises as fs } from "fs";
+import path from "path";
 import { db } from "@/db";
-import { products, categories, productImages, inventory } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { products as productsTable } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import type { Product } from "./types";
 import { slugify } from "./format";
+import { mediaToDto, pickVariantUrl } from "./media/resolve";
 
-// Images dédiées — fonctionne avec les slugs numériques (anciens) ET les slugs textuels (nouveaux)
-const SLUG_TO_IMAGE: Record<string, string> = {
-  // Slugs numériques (produits initiaux seedés avec id comme slug)
-  "1": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80",  // sérum
-  "2": "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=80",  // palette
-  "3": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&q=80",  // argan (garanti)
-  "4": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80",  // mascara
-  "5": "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80",    // crème karité
-  "6": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=800&q=80&v=2", // rouge à lèvres (anti-cache)
-  // Slugs textuels (nouveaux produits ajoutés via le panel admin)
-  "serum-eclat-vitamine-c":  "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80",
-  "palette-nude-divay":      "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=80",
-  "huile-capillaire-argan":  "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&q=80",
-  "mascara-volume-intense":  "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80",
-  "creme-hydratante-karite": "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80",
-  "rouge-a-levres-velours":  "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=800&q=80&v=2",
-};
+const DATA_PATH = path.join(process.cwd(), "data", "products.json");
 
-const FALLBACK_IMAGES = [
-  "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=800&q=80",
-  "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&q=80",
-  "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80",
-  "https://images.unsplash.com/photo-1519415387722-a68315f557af?w=800&q=80",
-];
+type DbProductRow = Awaited<ReturnType<typeof fetchDbProducts>>[number];
 
-function resolveImage(row: any): string {
-  // 1. Priorité absolue : image connue par slug (garantit un beau rendu)
-  if (SLUG_TO_IMAGE[row.slug]) return SLUG_TO_IMAGE[row.slug];
-
-  // 2. Image de la BDD si valide et non-placeholder
-  const dbUrl = row.images?.[0]?.url;
-  if (dbUrl && dbUrl.startsWith("http") && !dbUrl.includes("placeholder")) {
-    return dbUrl;
-  }
-
-  // 3. Fallback basé sur un hash du nom
-  const hash = (row.name ?? "").split("").reduce((a: number, c: string) => a + c.charCodeAt(0), 0);
-  return FALLBACK_IMAGES[hash % FALLBACK_IMAGES.length];
+async function fetchDbProducts(activeOnly: boolean) {
+  const rows = await db.query.products.findMany({
+    where: activeOnly ? eq(productsTable.isActive, 1) : undefined,
+    with: {
+      images: { with: { media: true } },
+      category: true,
+      inventory: true,
+    },
+  });
+  return rows;
 }
 
+function mapDbProduct(row: DbProductRow): Product {
+  const sortedImages = [...(row.images ?? [])].sort((a, b) => {
+    if (a.isMain !== b.isMain) return b.isMain - a.isMain;
+    return a.order - b.order;
+  });
 
-// Transforme un produit de la base de données SQLite en objet `Product` pour le frontend
-function mapDbProductToFrontend(row: any): Product {
+  let image = "/images/placeholder-product.svg";
+  let imageAlt = row.name;
+  let imageFocal = { x: 50, y: 50 };
+  const gallery: NonNullable<Product["gallery"]> = [];
+
+  for (const img of sortedImages) {
+    const dto = img.media ? mediaToDto(img.media) : null;
+    const url = (dto ? pickVariantUrl(dto, "md") : null) ?? img.url ?? null;
+    if (!url) continue;
+    const alt = img.altText ?? dto?.altText ?? row.name;
+    if (sortedImages.indexOf(img) === 0) {
+      image = url;
+      imageAlt = alt;
+      if (dto) imageFocal = { x: dto.focalX, y: dto.focalY };
+    } else {
+      gallery.push({ url, alt, focal: dto ? { x: dto.focalX, y: dto.focalY } : undefined });
+    }
+  }
+
   return {
     id: row.id,
     slug: row.slug,
     name: row.name,
     description: row.description,
-    priceUsdCents: row.priceMinor,
-    category: row.category?.name || "Beauté",
-    image: resolveImage(row),
+    priceCents: row.priceMinor,
+    category: row.category?.name ?? "Boutique",
+    image,
+    imageAlt,
+    imageFocal,
+    gallery,
     featured: row.isFeatured === 1,
-    stock: row.inventory?.quantity || 0,
+    stock: row.inventory?.quantity ?? 0,
   };
 }
 
+async function readProductsFile(): Promise<Product[]> {
+  const raw = await fs.readFile(DATA_PATH, "utf-8");
+  return JSON.parse(raw) as Product[];
+}
 
 export async function getProducts(): Promise<Product[]> {
-  const rows = await db.query.products.findMany({
-    where: eq(products.isActive, 1),
-    with: { images: true, inventory: true, category: true },
-  });
-  return rows.map(mapDbProductToFrontend);
+  const dbRows = await fetchDbProducts(true);
+  if (dbRows.length > 0) return dbRows.map(mapDbProduct);
+  return readProductsFile();
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
   const row = await db.query.products.findFirst({
-    where: and(eq(products.slug, slug), eq(products.isActive, 1)),
-    with: { images: true, inventory: true, category: true },
+    where: eq(productsTable.slug, slug),
+    with: {
+      images: { with: { media: true } },
+      category: true,
+      inventory: true,
+    },
   });
-  return row ? mapDbProductToFrontend(row) : undefined;
+  if (row && row.isActive === 1) return mapDbProduct(row);
+
+  const fileProducts = await readProductsFile().catch(() => []);
+  return fileProducts.find((p) => p.slug === slug);
 }
 
 export async function getFeaturedProducts(): Promise<Product[]> {
-  const rows = await db.query.products.findMany({
-    where: and(eq(products.isFeatured, 1), eq(products.isActive, 1)),
-    with: { images: true, inventory: true, category: true },
-  });
-  return rows.map(mapDbProductToFrontend);
+  const dbRows = await fetchDbProducts(true);
+  if (dbRows.length > 0) {
+    return dbRows.filter((p) => p.isFeatured === 1).map(mapDbProduct);
+  }
+  const products = await readProductsFile();
+  return products.filter((p) => p.featured);
 }
 
 export async function getCategories(): Promise<string[]> {
-  const rows = await db.select().from(categories);
-  return rows.map((c) => c.name).sort();
+  const products = await getProducts();
+  return [...new Set(products.map((p) => p.category))].sort();
 }
 
-// Fonction gardée pour éviter de casser d'anciennes références, bien qu'elle soit obsolète
-export async function saveProducts(p: Product[]): Promise<void> {
-  console.warn("saveProducts is obsolete. Use Drizzle DB directly.");
+export async function saveProducts(products: Product[]): Promise<void> {
+  await fs.writeFile(DATA_PATH, JSON.stringify(products, null, 2), "utf-8");
 }
 
 export function buildProduct(input: Omit<Product, "id" | "slug"> & { slug?: string }): Product {

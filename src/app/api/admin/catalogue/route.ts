@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { products, productImages, inventory, categories } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "crypto";
+import { applyProductImages } from "@/lib/product-images";
 
 async function checkAdmin() {
   const session = await getSession();
@@ -22,7 +23,8 @@ export async function GET() {
 export async function POST(req: Request) {
   if (!await checkAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { name, description, priceMinor, stock, image, isFeatured } = await req.json();
+  const { name, description, priceMinor, stock, image, isFeatured, mainMediaId, galleryMediaIds } =
+    await req.json();
 
   // Catégorie par défaut
   let catId: string;
@@ -51,9 +53,11 @@ export async function POST(req: Request) {
     isActive: 1,
   });
 
-  if (image) {
-    await db.insert(productImages).values({ id: randomUUID(), productId, url: image });
-  }
+  await applyProductImages(productId, {
+    mainMediaId: mainMediaId ?? null,
+    galleryMediaIds: galleryMediaIds ?? [],
+    legacyImageUrl: image ?? null,
+  });
 
   await db.insert(inventory).values({ id: randomUUID(), productId, quantity: stock ?? 0 });
 

@@ -1,98 +1,124 @@
-import { SHOP_NAME } from "@/lib/currency";
 import Link from "next/link";
+import { Phone, MapPin, Mail, MessageCircle } from "lucide-react";
 
 export function SiteFooter() {
-  const year = new Date().getFullYear();
-
   return (
-    <footer className="mt-auto border-t border-stone-800/60 bg-[#0f0e0d] text-stone-400">
-      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div className="grid gap-12 sm:grid-cols-3">
-
-          {/* Colonne 1 — Marque */}
-          <div>
-            <p className="font-serif text-xl tracking-wide text-white">{SHOP_NAME}</p>
-            <p className="mt-4 text-sm leading-relaxed text-stone-500">
-              Une sélection exclusive de cosmétiques et soins haut de gamme, livrés à Kinshasa.
-            </p>
-            <div className="mt-6 flex gap-3">
-              <a
-                href="https://wa.me/243000000000"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-800 text-stone-500 transition hover:border-[#c45c3e] hover:text-[#c45c3e]"
-                aria-label="WhatsApp"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.489-1.761-1.663-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
-                </svg>
-              </a>
-              <a
-                href="https://instagram.com/divaybeauty"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-800 text-stone-500 transition hover:border-[#c45c3e] hover:text-[#c45c3e]"
-                aria-label="Instagram"
-              >
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                </svg>
-              </a>
+    <footer className="bg-[#1a120e] text-[#f2ebe5]">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-5">
+          
+          {/* Logo & Brand */}
+          <div className="col-span-1 flex flex-col items-start md:items-center text-center">
+            <div className="flex items-center gap-1 font-serif text-3xl text-white tracking-tight">
+              <span className="text-4xl">D</span>
+              <span className="text-4xl">B</span>
+            </div>
+            <div className="font-serif text-xl tracking-widest mb-1 uppercase mt-2">Divay Beauty</div>
+            <div 
+              className="text-[#c9b4a7] mt-1" 
+              style={{ fontFamily: 'var(--font-cursive), cursive', fontSize: '14px' }}
+            >
+              Sublimez votre beauté
             </div>
           </div>
 
-          {/* Colonne 2 — Navigation */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-stone-600">
-              Navigation
-            </p>
-            <ul className="mt-5 space-y-3">
-              {[
-                { href: "/boutique", label: "Boutique" },
-                { href: "/panier", label: "Mon panier" },
-                { href: "/connexion", label: "Mon compte" },
-                { href: "/suivi", label: "Suivi de commande" },
-              ].map(({ href, label }) => (
-                <li key={href}>
-                  <Link href={href} className="text-sm transition hover:text-white">
-                    {label}
-                  </Link>
-                </li>
-              ))}
+          {/* Contact */}
+          <div className="col-span-1">
+            <h3 className="mb-6 text-[10px] font-bold uppercase tracking-widest text-white">Nous contacter</h3>
+            <ul className="space-y-4 text-[11px] font-light text-[#d8cbc4]">
+              <li className="flex items-center gap-3">
+                <Phone className="h-3.5 w-3.5" /> +243 87 123 45 67
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail className="h-3.5 w-3.5" /> @divay_beauty
+              </li>
+              <li className="flex items-center gap-3">
+                <MapPin className="h-3.5 w-3.5" /> Kinshasa, RDC
+              </li>
             </ul>
           </div>
 
-          {/* Colonne 3 — Contact */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-stone-600">
-              Contact
-            </p>
-            <ul className="mt-5 space-y-4 text-sm">
-              <li>
-                <span className="text-stone-500">Kinshasa, R.D. Congo</span>
+          {/* Horaires */}
+          <div className="col-span-1">
+            <h3 className="mb-6 text-[10px] font-bold uppercase tracking-widest text-white">Horaires d'ouverture</h3>
+            <ul className="space-y-4 text-[11px] font-light text-[#d8cbc4]">
+              <li className="flex gap-3">
+                <CalendarIcon className="h-3.5 w-3.5 shrink-0" />
+                <div>
+                  <p>Lundi - Samedi : 8h - 20h</p>
+                  <p className="mt-2">Dimanche : 9h - 16h</p>
+                </div>
               </li>
-              <li>
-                <a href="https://wa.me/243000000000" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  +243 000 000 000
-                </a>
-              </li>
-              <li>
-                <a href="mailto:contact@divaybeauty.com" className="transition hover:text-white">
-                  contact@divaybeauty.com
-                </a>
-              </li>
-              <li className="text-stone-600">Lun – Sam · 8h à 19h</li>
             </ul>
           </div>
-        </div>
 
-        <div className="mt-14 flex flex-col gap-2 border-t border-stone-800/60 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-stone-600">© {year} {SHOP_NAME}</p>
-          <p className="text-xs text-stone-700">Kinshasa · République Démocratique du Congo</p>
+          {/* Liens utiles */}
+          <div className="col-span-1">
+            <h3 className="mb-6 text-[10px] font-bold uppercase tracking-widest text-white">Liens utiles</h3>
+            <ul className="space-y-3 text-[11px] font-light text-[#d8cbc4]">
+              <li><Link href="/prestations" className="hover:text-white transition">Nos services</Link></li>
+              <li><Link href="/tarifs" className="hover:text-white transition">Tarifs</Link></li>
+              <li><Link href="/a-propos" className="hover:text-white transition">À propos</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition">Contact</Link></li>
+            </ul>
+          </div>
+
+          {/* Suivez-nous */}
+          <div className="col-span-1">
+            <h3 className="mb-6 text-[10px] font-bold uppercase tracking-widest text-white">Suivez-nous</h3>
+            <div className="flex gap-4 text-[#d8cbc4]">
+              <a href="#" className="hover:text-white transition">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+              </a>
+              <a href="#" className="hover:text-white transition">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+              </a>
+              <a href="#" className="hover:text-white transition">
+                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+              </a>
+              <a href="#" className="hover:text-white transition"><MessageCircle className="h-4 w-4" /></a>
+            </div>
+            <p 
+              className="mt-6 text-[#c9b4a7]"
+              style={{ fontFamily: 'var(--font-cursive), cursive', fontSize: '18px' }}
+            >
+              Belle aujourd'hui, plus belle demain ♡
+            </p>
+          </div>
+
         </div>
+      </div>
+      <div className="border-t border-[#2a1c15] bg-[#1a120e] py-4 text-center text-[9px] text-[#8c7a6e]">
+        © 2026 Divay Beauty. Tous droits réservés.
       </div>
     </footer>
   );
+}
+
+function CalendarIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+      <line x1="16" x2="16" y1="2" y2="6" />
+      <line x1="8" x2="8" y1="2" y2="6" />
+      <line x1="3" x2="21" y1="10" y2="10" />
+    </svg>
+  )
 }

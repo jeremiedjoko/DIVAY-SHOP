@@ -1,16 +1,25 @@
-import { getSession } from "./session";
+import crypto from "crypto";
+import { cookies } from "next/headers";
 
-export const COOKIE_NAME = "divay_session";
+const COOKIE_NAME = "boutique_admin";
 
 export function adminToken(): string | null {
-  // Maintenu pour la rétrocompatibilité des anciens formulaires
-  return "migrated-to-api";
+  const secret = process.env.ADMIN_PASSWORD;
+  if (!secret) return null;
+  return crypto.createHmac("sha256", secret).update("boutique-admin").digest("hex");
 }
 
 export async function isAdminAuthenticated(): Promise<boolean> {
-  const session = await getSession();
-  if (!session) return false;
-  
-  // Seuls le SUPER_ADMIN et la VENDEUSE ont accès au dashboard Admin
-  return session.roles.includes('SUPER_ADMIN') || session.roles.includes('VENDEUSE');
+  const token = adminToken();
+  if (!token) return false;
+  const jar = await cookies();
+  const value = jar.get(COOKIE_NAME)?.value;
+  if (!value) return false;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(value), Buffer.from(token));
+  } catch {
+    return false;
+  }
 }
+
+export { COOKIE_NAME };

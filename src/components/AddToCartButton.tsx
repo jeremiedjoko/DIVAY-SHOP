@@ -19,7 +19,7 @@ export function AddToCartButton({
       productId: product.id,
       slug: product.slug,
       name: product.name,
-      priceUsdCents: product.priceUsdCents,
+      priceCents: product.priceCents,
       image: product.image,
     });
     setAdded(true);
@@ -33,7 +33,7 @@ export function AddToCartButton({
       className={
         compact
           ? "rounded-full bg-stone-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-stone-800"
-          : "w-full rounded-full bg-[#c0476b] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#9e3457]"
+          : "w-full rounded-full bg-[#c45c3e] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#a84d34]"
       }
     >
       {added ? "Ajouté ✓" : "Ajouter"}

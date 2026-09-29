@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   X,
+  Images,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -20,6 +21,7 @@ const navItems = [
   { name: "Tableau de bord", href: "/admin", icon: LayoutDashboard, exact: true },
   { name: "Commandes", href: "/admin/commandes", icon: ShoppingBag, exact: false },
   { name: "Catalogue", href: "/admin/catalogue", icon: Package, exact: false },
+  { name: "Médias", href: "/admin/medias", icon: Images, exact: false },
   { name: "Promotions", href: "/admin/promotions", icon: Tag, exact: false },
   { name: "Clients", href: "/admin/clients", icon: Users, exact: false },
   { name: "Rapports & CA", href: "/admin/rapports", icon: BarChart3, exact: false },

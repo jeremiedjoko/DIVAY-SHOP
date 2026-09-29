@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/customer-auth";
-import { buildOrderFromCart } from "@/lib/order-factory";
+import { resolveCartLines } from "@/lib/cart-server";
 import { saveOrder } from "@/lib/orders";
-import { applyStockDelta } from "@/lib/stock";
+import type { Order } from "@/lib/types";
 import { checkoutBodySchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
@@ -18,25 +17,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Informations invalides." }, { status: 400 });
   }
 
-  const user = await getCurrentUser();
-  const built = await buildOrderFromCart({
+  const resolved = await resolveCartLines(parsed.data.items);
+  if ("error" in resolved) {
+    return NextResponse.json({ error: resolved.error }, { status: 400 });
+  }
+
+  const order: Order = {
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
     paymentMethod: "cod",
     status: "pending",
-    currency: parsed.data.currency,
     customer: parsed.data.customer,
-    items: parsed.data.items,
-    userId: user?.id,
-  });
-  if ("error" in built) {
-    return NextResponse.json({ error: built.error }, { status: 400 });
-  }
+    lines: resolved.lines,
+    totalCents: resolved.totalCents,
+  };
 
-  const stock = await applyStockDelta(built.order.lines, "decrement");
-  if (!stock.ok) {
-    return NextResponse.json({ error: stock.error }, { status: 400 });
-  }
+  await saveOrder(order);
 
-  await saveOrder(built.order);
-
-  return NextResponse.json({ orderId: built.order.id });
+  return NextResponse.json({ orderId: order.id });
 }

@@ -48,11 +48,62 @@ export const products = sqliteTable('products', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
 });
 
+export const media = sqliteTable('media', {
+  id: text('id').primaryKey(),
+  bucket: text('bucket').notNull(),
+  assetFolder: text('asset_folder'),
+  storagePath: text('storage_path').notNull(),
+  publicBasePath: text('public_base_path').notNull(),
+  altText: text('alt_text'),
+  focalX: integer('focal_x').default(50).notNull(),
+  focalY: integer('focal_y').default(50).notNull(),
+  width: integer('width'),
+  height: integer('height'),
+  mimeType: text('mime_type'),
+  source: text('source'),
+  sourceUrl: text('source_url'),
+  licenseNote: text('license_note'),
+  isStock: integer('is_stock').default(0).notNull(),
+  variantsJson: text('variants_json').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
+});
+
 export const productImages = sqliteTable('product_images', {
   id: text('id').primaryKey(),
   productId: text('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
-  url: text('url').notNull(),
+  mediaId: text('media_id').references(() => media.id, { onDelete: 'set null' }),
+  url: text('url'),
+  altText: text('alt_text'),
+  isMain: integer('is_main').default(0).notNull(),
   order: integer('order').default(0).notNull(),
+});
+
+export const siteSections = sqliteTable('site_sections', {
+  id: text('id').primaryKey(),
+  sectionKey: text('section_key').unique().notNull(),
+  label: text('label').notNull(),
+  mediaId: text('media_id').references(() => media.id, { onDelete: 'set null' }),
+  metaJson: text('meta_json'),
+});
+
+export const beautyServices = sqliteTable('beauty_services', {
+  id: text('id').primaryKey(),
+  slug: text('slug').unique().notNull(),
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  icon: text('icon'),
+  mediaId: text('media_id').references(() => media.id, { onDelete: 'set null' }),
+  sortOrder: integer('sort_order').default(0).notNull(),
+  isActive: integer('is_active').default(1).notNull(),
+});
+
+export const galleryItems = sqliteTable('gallery_items', {
+  id: text('id').primaryKey(),
+  mediaId: text('media_id').notNull().references(() => media.id, { onDelete: 'cascade' }),
+  caption: text('caption'),
+  sortOrder: integer('sort_order').default(0).notNull(),
+  isActive: integer('is_active').default(1).notNull(),
 });
 
 export const inventory = sqliteTable('inventory', {
@@ -77,8 +128,28 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   inventory: one(inventory, { fields: [products.id], references: [inventory.productId] }),
 }));
 
+export const mediaRelations = relations(media, ({ many }) => ({
+  productImages: many(productImages),
+  siteSections: many(siteSections),
+  beautyServices: many(beautyServices),
+  galleryItems: many(galleryItems),
+}));
+
 export const productImagesRelations = relations(productImages, ({ one }) => ({
   product: one(products, { fields: [productImages.productId], references: [products.id] }),
+  media: one(media, { fields: [productImages.mediaId], references: [media.id] }),
+}));
+
+export const siteSectionsRelations = relations(siteSections, ({ one }) => ({
+  media: one(media, { fields: [siteSections.mediaId], references: [media.id] }),
+}));
+
+export const beautyServicesRelations = relations(beautyServices, ({ one }) => ({
+  media: one(media, { fields: [beautyServices.mediaId], references: [media.id] }),
+}));
+
+export const galleryItemsRelations = relations(galleryItems, ({ one }) => ({
+  media: one(media, { fields: [galleryItems.mediaId], references: [media.id] }),
 }));
 
 export const inventoryRelations = relations(inventory, ({ one }) => ({

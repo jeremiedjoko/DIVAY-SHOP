@@ -1,143 +1,94 @@
-import { getSession } from "@/lib/session";
-import { db } from "@/db";
-import { products, users } from "@/db/schema";
-import { sql } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import Link from "next/link";
+"use client";
 
-async function getStats() {
-  const [productCount] = await db.select({ count: sql<number>`count(*)` }).from(products);
-  const [userCount] = await db.select({ count: sql<number>`count(*)` }).from(users);
-  return {
-    productCount: Number(productCount.count),
-    userCount: Number(userCount.count),
-    revenue: 0,
-    orderCount: 0,
-  };
-}
+import { FormEvent, useEffect, useState } from "react";
+import type { Product } from "@/lib/types";
+import { formatPrice } from "@/lib/format";
 
-export default async function AdminDashboard() {
-  const session = await getSession();
-  if (!session?.roles?.includes("SUPER_ADMIN") && !session?.roles?.includes("VENDEUSE")) {
-    redirect("/connexion");
+export default function AdminPage() {
+  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  async function loadProducts() {
+    const res = await fetch("/api/admin/products");
+    if (res.status === 401) {
+      setAuthed(false);
+      return;
+    }
+    const data = (await res.json()) as { products: Product[] };
+    setProducts(data.products);
+    setAuthed(true);
   }
 
-  const stats = await getStats();
+  useEffect(() => {
+    void loadProducts();
+  }, []);
 
-  const kpis = [
-    {
-      label: "Chiffre d'affaires",
-      value: `$${stats.revenue.toFixed(2)}`,
-      sub: "Phase 4 — Checkout en cours",
-      color: "text-stone-900",
-    },
-    {
-      label: "Commandes",
-      value: stats.orderCount,
-      sub: "Phase 4 — en construction",
-      color: "text-stone-900",
-    },
-    {
-      label: "Produits actifs",
-      value: stats.productCount,
-      sub: "Catalogue en ligne",
-      color: "text-stone-900",
-    },
-    {
-      label: "Clients inscrits",
-      value: stats.userCount,
-      sub: "Comptes validés",
-      color: "text-stone-900",
-    },
-  ];
+  async function login(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    const fd = new FormData(e.currentTarget);
+    const res = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: fd.get("password") }),
+    });
+    if (!res.ok) {
+      setError("Mot de passe incorrect.");
+      return;
+    }
+    await loadProducts();
+  }
 
-  const quickActions = [
-    { label: "Gérer les commandes", href: "/admin/commandes", desc: "Suivi, statuts, livreurs" },
-    { label: "Gérer le catalogue", href: "/admin/catalogue", desc: "Ajouter, modifier, supprimer" },
-    { label: "Créer une promotion", href: "/admin/promotions", desc: "Codes promo et réductions" },
-    { label: "Voir les rapports", href: "/admin/rapports", desc: "CA, graphiques, exports PDF" },
-  ];
+  if (authed === null) {
+    return <main className="mx-auto max-w-lg px-4 py-20 text-center text-stone-500">Chargement…</main>;
+  }
+
+  if (!authed) {
+    return (
+      <main className="mx-auto max-w-sm px-4 py-20">
+        <h1 className="font-serif text-2xl">Espace vendeuse</h1>
+        <form onSubmit={login} className="mt-6 space-y-4">
+          <input
+            name="password"
+            type="password"
+            placeholder="Mot de passe admin"
+            required
+            className="w-full rounded-xl border border-stone-300 px-3 py-2"
+          />
+          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          <button type="submit" className="w-full rounded-full bg-stone-900 py-2 text-white">
+            Connexion
+          </button>
+        </form>
+      </main>
+    );
+  }
 
   return (
-    <div className="p-6 sm:p-8 max-w-7xl mx-auto space-y-8">
-      {/* Header */}
-      <div className="border-b border-stone-200 pb-6">
-        <h1 className="font-serif text-3xl text-stone-900">Tableau de bord</h1>
-        <p className="text-sm text-stone-400 mt-1">
-          {new Date().toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-        </p>
-      </div>
-
-      {/* KPI Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((kpi) => (
-          <div
-            key={kpi.label}
-            className="bg-white rounded-2xl border border-stone-200 p-5 shadow-sm hover:shadow-md transition-shadow"
+    <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      <h1 className="font-serif text-3xl">Produits ({products.length})</h1>
+      <p className="mt-2 text-sm text-stone-500">
+        Gestion réservée à la vendeuse. Les prix sont revérifiés côté serveur à chaque commande.
+      </p>
+      <ul className="mt-8 space-y-3">
+        {products.map((p) => (
+          <li
+            key={p.id}
+            className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-stone-200 bg-white px-4 py-3"
           >
-            <p className="text-xs font-semibold uppercase tracking-widest text-stone-400">
-              {kpi.label}
-            </p>
-            <p className={`text-3xl font-serif mt-3 ${kpi.color}`}>{kpi.value}</p>
-            <p className="text-xs text-stone-400 mt-2">{kpi.sub}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Quick Actions */}
-      <div>
-        <h2 className="text-sm font-semibold uppercase tracking-widest text-stone-400 mb-4">
-          Actions rapides
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {quickActions.map((action) => (
-            <Link
-              key={action.href}
-              href={action.href}
-              className="flex items-center justify-between bg-white rounded-2xl border border-stone-200 px-6 py-5 shadow-sm hover:border-stone-900 hover:shadow-md transition-all group"
-            >
-              <div>
-                <p className="font-medium text-stone-900">{action.label}</p>
-                <p className="text-sm text-stone-400 mt-0.5">{action.desc}</p>
-              </div>
-              <svg
-                className="h-5 w-5 text-stone-300 group-hover:text-stone-900 transition-colors"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Status banner */}
-      <div className="rounded-2xl border border-stone-200 bg-stone-900 text-white p-6">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">Statut du projet</p>
-        <p className="font-serif text-xl mt-2">Phase 3 en cours — Catalogue & Commandes</p>
-        <p className="text-sm text-white/60 mt-1">
-          Le back-office est opérationnel. Les prochaines phases activeront le checkout complet,
-          les quittances PDF clients, les graphiques de CA et la gestion des livreurs.
-        </p>
-        <div className="flex gap-2 mt-4">
-          {["Auth ✓", "BDD ✓", "Layout ✓", "Catalogue →", "Checkout", "PDF", "Rapports"].map((s, i) => (
-            <span
-              key={s}
-              className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                s.includes("✓")
-                  ? "bg-green-500/20 text-green-300"
-                  : s.includes("→")
-                  ? "bg-[#c0476b]/30 text-[#e8876a]"
-                  : "bg-white/10 text-white/40"
-              }`}
-            >
-              {s}
+            <span className="font-medium">{p.name}</span>
+            <span className="text-sm text-stone-500">
+              {formatPrice(p.priceCents)} · stock {p.stock}
             </span>
-          ))}
-        </div>
-      </div>
-    </div>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-8 text-sm text-stone-500">
+        Pour ajouter ou modifier des produits via l&apos;API, utilisez POST/PUT sur{" "}
+        <code className="rounded bg-stone-100 px-1">/api/admin/products</code> une fois connectée,
+        ou éditez <code className="rounded bg-stone-100 px-1">data/products.json</code>.
+      </p>
+    </main>
   );
 }

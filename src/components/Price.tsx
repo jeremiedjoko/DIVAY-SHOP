@@ -1,9 +1,11 @@
 "use client";
 
-import { formatCatalogPrice } from "@/lib/currency";
-import { useCurrency } from "@/store/currency";
-
 export function Price({ priceUsdCents }: { priceUsdCents: number }) {
-  const currency = useCurrency((s) => s.currency);
-  return <>{formatCatalogPrice(priceUsdCents, currency)}</>;
+  // Convertit les centimes en valeur réelle et formate en devise
+  const formattedPrice = (priceUsdCents / 100).toLocaleString("fr-FR", {
+    style: "currency",
+    currency: "USD",
+  });
+
+  return <span>{formattedPrice}</span>;
 }

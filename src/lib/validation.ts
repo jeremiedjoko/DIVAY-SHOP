@@ -6,18 +6,22 @@ export const customerSchema = z.object({
   phone: z.string().min(6).max(30),
   address: z.string().min(5).max(200),
   city: z.string().min(2).max(100),
-  postalCode: z.string().min(2).max(12),
+  postalCode: z.string().min(4).max(12),
+});
+
+export const cartItemSchema = z.object({
+  productId: z.string().uuid(),
+  quantity: z.number().int().min(1).max(20),
 });
 
 export const checkoutBodySchema = z.object({
-  currency: z.enum(["USD", "CDF"]),
   customer: customerSchema,
   items: z.array(
     z.object({
       productId: z.string(),
       slug: z.string(),
       name: z.string(),
-      priceUsdCents: z.number(),
+      priceCents: z.number(),
       image: z.string(),
       quantity: z.number().int().min(1).max(20),
     }),

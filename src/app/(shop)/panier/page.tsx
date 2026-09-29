@@ -7,6 +7,7 @@ import { Price } from "@/components/Price";
 import { CartTotal } from "@/components/CartTotal";
 import { useCart } from "@/store/cart";
 
+// Force rebuild
 export default function PanierPage() {
   const router = useRouter();
   const { items, setQuantity, removeItem, itemCount, setCheckoutSession } = useCart();
@@ -41,7 +42,7 @@ export default function PanierPage() {
         {items.map((item) => (
           <li key={item.productId} className="flex flex-wrap gap-4 p-4 sm:flex-nowrap sm:items-center">
             <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-lg">
-              <Image src={item.image} alt={item.name} fill className="object-cover" />
+              <Image unoptimized src={item.image} alt={item.name} fill className="object-cover" />
             </div>
             <div className="min-w-0 flex-1">
               <Link href={`/produit/${item.slug}`} className="font-medium hover:underline">

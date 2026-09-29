@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { PlusCircle, Pencil, Eye, EyeOff, Star, Search } from "lucide-react";
+import { MediaPicker } from "@/components/admin/MediaPicker";
 
 type Product = {
   id: string;
@@ -12,7 +12,7 @@ type Product = {
   isActive: number;
   isFeatured: number;
   inventory?: { quantity: number } | null;
-  images?: { url: string }[];
+  images?: { url: string | null; mediaId: string | null; isMain: number }[];
 };
 
 export default function CataloguePage() {
@@ -21,7 +21,15 @@ export default function CataloguePage() {
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
-  const [form, setForm] = useState({ name: "", description: "", price: "", stock: "", image: "", featured: false });
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    price: "",
+    stock: "",
+    featured: false,
+    mainMediaId: null as string | null,
+    galleryMediaIds: [] as string[],
+  });
   const [saving, setSaving] = useState(false);
 
   async function loadProducts() {
@@ -60,8 +68,9 @@ export default function CataloguePage() {
       name: form.name,
       description: form.description,
       priceMinor: Math.round(parseFloat(form.price) * 100),
-      stock: parseInt(form.stock),
-      image: form.image,
+      stock: parseInt(form.stock, 10),
+      mainMediaId: form.mainMediaId,
+      galleryMediaIds: form.galleryMediaIds,
       isFeatured: form.featured ? 1 : 0,
     };
     if (editProduct) {
@@ -80,19 +89,31 @@ export default function CataloguePage() {
     setSaving(false);
     setShowForm(false);
     setEditProduct(null);
-    setForm({ name: "", description: "", price: "", stock: "", image: "", featured: false });
+    setForm({
+      name: "",
+      description: "",
+      price: "",
+      stock: "",
+      featured: false,
+      mainMediaId: null,
+      galleryMediaIds: [],
+    });
     loadProducts();
   }
 
   function openEdit(p: Product) {
+    const imgs = [...(p.images ?? [])].sort((a, b) => b.isMain - a.isMain);
+    const main = imgs.find((i) => i.isMain === 1) ?? imgs[0];
+    const gallery = imgs.filter((i) => i.mediaId && i.mediaId !== main?.mediaId).map((i) => i.mediaId!);
     setEditProduct(p);
     setForm({
       name: p.name,
       description: "",
       price: (p.priceMinor / 100).toFixed(2),
       stock: String(p.inventory?.quantity ?? 0),
-      image: p.images?.[0]?.url ?? "",
       featured: p.isFeatured === 1,
+      mainMediaId: main?.mediaId ?? null,
+      galleryMediaIds: gallery,
     });
     setShowForm(true);
   }
@@ -110,7 +131,19 @@ export default function CataloguePage() {
           <p className="text-sm text-stone-400 mt-1">{products.length} produit{products.length > 1 ? "s" : ""} au total</p>
         </div>
         <button
-          onClick={() => { setShowForm(true); setEditProduct(null); setForm({ name: "", description: "", price: "", stock: "", image: "", featured: false }); }}
+          onClick={() => {
+            setShowForm(true);
+            setEditProduct(null);
+            setForm({
+              name: "",
+              description: "",
+              price: "",
+              stock: "",
+              featured: false,
+              mainMediaId: null,
+              galleryMediaIds: [],
+            });
+          }}
           className="flex items-center gap-2 bg-stone-900 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-stone-800 transition"
         >
           <PlusCircle className="h-4 w-4" />
@@ -146,9 +179,25 @@ export default function CataloguePage() {
               <label className="block text-xs font-medium uppercase tracking-wider text-stone-400 mb-1">Stock</label>
               <input required type="number" value={form.stock} onChange={e => setForm(f => ({ ...f, stock: e.target.value }))} className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900" />
             </div>
-            <div>
-              <label className="block text-xs font-medium uppercase tracking-wider text-stone-400 mb-1">URL Image</label>
-              <input value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900" />
+            <div className="sm:col-span-2 space-y-3 rounded-xl border border-stone-100 bg-stone-50 p-4">
+              <MediaPicker
+                bucket="product"
+                label="Image principale"
+                value={form.mainMediaId}
+                onChange={(id) => setForm((f) => ({ ...f, mainMediaId: id }))}
+              />
+              <MediaPicker
+                bucket="product"
+                label="Galerie (images supplémentaires)"
+                multi
+                values={form.galleryMediaIds}
+                onMultiChange={(ids) => setForm((f) => ({ ...f, galleryMediaIds: ids }))}
+                onChange={() => {}}
+              />
+              <p className="text-xs text-stone-500">
+                Téléversez d&apos;abord vos photos dans Admin → Médias (dossiers 05–09). Remplacez
+                les visuels stock par les vraies photos produits avant la production.
+              </p>
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-medium uppercase tracking-wider text-stone-400 mb-1">Description</label>

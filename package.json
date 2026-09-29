@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:migrate-media": "tsx src/db/migrate-media.ts",
+    "media:init-storage": "tsx scripts/init-media-storage.ts"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.9.0",
+    "@supabase/supabase-js": "^2.117.2",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.2",
@@ -19,6 +22,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "recharts": "^3.10.1",
+    "sharp": "^0.35.5",
     "stripe": "^22.6.2",
     "zod": "^4.6.5",
     "zustand": "^5.0.15"

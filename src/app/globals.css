@@ -1,11 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdf9f9;        /* Blanc ivoire légèrement rosé */
-  --foreground: #1a1118;        /* Presque noir, légèrement chaud */
-  --accent: #c0476b;            /* Rose profond — couleur signature */
-  --accent-dark: #9e3457;       /* Rose sombre — survol */
-  --accent-light: #f9ecf0;      /* Rose poudré — arrière-plans */
+  --background: #faf8f5;
+  --foreground: #1c1917;
+  --accent: #c45c3e;
 }
 
 @theme inline {
@@ -14,84 +12,14 @@
   --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-serif: var(--font-playfair);
-
-  /* ── Animations ── */
-  --animate-marquee: marquee 35s linear infinite;
-  --animate-slide-down: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-fade-up: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-check: checkmark 0.5s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-  --animate-shimmer: shimmer 2s linear infinite;
-
-  @keyframes marquee {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes checkmark {
-    0%   { stroke-dasharray: 0, 100; opacity: 0; }
-    100% { stroke-dasharray: 100, 100; opacity: 1; }
-  }
-  @keyframes shimmer {
-    0%   { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
-}
-
-/* ── Base ───────────────────────────────────────────────────── */
-html {
-  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .font-serif {
   font-family: var(--font-playfair), Georgia, serif;
-}
-
-/* ── Scrollbar premium (dark background) ────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #3a3532;
-  border-radius: 99px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #c45c3e;
-}
-
-/* ── Sélection de texte ─────────────────────────────────────── */
-::selection {
-  background: #c45c3e22;
-  color: #c45c3e;
-}
-
-/* ── Transitions globales pour les liens et boutons ─────────── */
-a, button {
-  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* ── Focus visible accessible ───────────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 4px;
 }

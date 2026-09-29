@@ -1,21 +1,19 @@
 "use client";
 
-import { formatCatalogPrice } from "@/lib/currency";
-import { useCart, CartItem } from "@/store/cart";
-import { useCurrency } from "@/store/currency";
+import { useEffect, useState } from "react";
+import { useCart } from "@/store/cart";
+import { Price } from "@/components/Price";
 
-type Props = {
-  overrideItems?: CartItem[]; // Utilisé pour le mode express (1 seul article)
-};
+export function CartTotal() {
+  const [mounted, setMounted] = useState(false);
+  const total = useCart((s) => s.totalUsdCents());
 
-export function CartTotal({ overrideItems }: Props) {
-  const totalUsdCents = useCart((s) => s.totalUsdCents());
-  const currency = useCurrency((s) => s.currency);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  // Si on a des articles override (mode express), calculer leur total à la place
-  const displayTotal = overrideItems
-    ? overrideItems.reduce((sum, i) => sum + i.priceUsdCents * i.quantity, 0)
-    : totalUsdCents;
+  // Empêche les erreurs d'hydratation entre le serveur et le localStorage
+  if (!mounted) return <span className="opacity-0">0</span>;
 
-  return <>{formatCatalogPrice(displayTotal, currency)}</>;
+  return <Price priceUsdCents={total} />;
 }

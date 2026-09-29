@@ -3,7 +3,7 @@ import { getSession } from "@/lib/session";
 import { db } from "@/db";
 import { products, productImages, inventory } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { randomUUID } from "crypto";
+import { applyProductImages } from "@/lib/product-images";
 
 async function checkAdmin() {
   const session = await getSession();
@@ -34,11 +34,16 @@ export async function PATCH(
     await db.update(inventory).set({ quantity: body.stock }).where(eq(inventory.productId, id));
   }
 
-  if (body.image !== undefined) {
-    await db.delete(productImages).where(eq(productImages.productId, id));
-    if (body.image) {
-      await db.insert(productImages).values({ id: randomUUID(), productId: id, url: body.image });
-    }
+  if (
+    body.image !== undefined ||
+    body.mainMediaId !== undefined ||
+    body.galleryMediaIds !== undefined
+  ) {
+    await applyProductImages(id, {
+      mainMediaId: body.mainMediaId ?? null,
+      galleryMediaIds: body.galleryMediaIds ?? [],
+      legacyImageUrl: body.image ?? null,
+    });
   }
 
   return NextResponse.json({ success: true });
