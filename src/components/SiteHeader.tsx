@@ -3,11 +3,28 @@
 import Link from "next/link";
 import { useCart } from "@/store/cart";
 import { Calendar, ShoppingBag } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 const shopName = process.env.NEXT_PUBLIC_SHOP_NAME ?? "DIVAY BEAUTY";
 
+const navLinks = [
+  { href: "/", label: "Accueil", exact: true },
+  { href: "/prestations", label: "Nos services", exact: false },
+  { href: "/tarifs", label: "Tarifs", exact: false },
+  { href: "/boutique", label: "Boutique", icon: true, exact: false },
+  { href: "/a-propos", label: "À propos", exact: false },
+  { href: "/galerie", label: "Galerie", exact: false },
+  { href: "/contact", label: "Contact", exact: false },
+];
+
 export function SiteHeader() {
   const itemCount = useCart((s) => s.itemCount());
+  const pathname = usePathname();
+
+  function isActive(href: string, exact: boolean) {
+    if (exact) return pathname === href;
+    return pathname.startsWith(href);
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm shadow-sm border-b border-[#f0dde6]">
@@ -15,12 +32,10 @@ export function SiteHeader() {
 
         {/* LOGO */}
         <Link href="/" className="flex flex-col items-center justify-center group">
-          {/* Monogramme DB élégant */}
           <div className="relative flex items-center justify-center">
-            {/* Cercle décoratif derrière */}
             <div className="absolute inset-0 rounded-full border border-[#c0476b]/20 scale-125" />
             <span
-              className="relative font-serif text-[28px] leading-none tracking-[-0.02em] text-[#2a1c15] group-hover:text-[#c0476b] transition-colors duration-300"
+              className="relative font-serif text-[28px] leading-none text-[#2a1c15] group-hover:text-[#c0476b] transition-colors duration-300"
               style={{ letterSpacing: "0.08em" }}
             >
               <span className="text-[#c0476b]">D</span>
@@ -28,13 +43,9 @@ export function SiteHeader() {
               <span>B</span>
             </span>
           </div>
-          {/* Nom de la marque */}
-          <span
-            className="mt-0.5 text-[9px] uppercase tracking-[0.35em] text-[#2a1c15]/70 font-medium"
-          >
+          <span className="mt-0.5 text-[9px] uppercase tracking-[0.35em] text-[#2a1c15]/70 font-medium">
             {shopName}
           </span>
-          {/* Tagline cursive */}
           <span
             className="text-[#c0476b]/70 leading-none"
             style={{ fontFamily: "var(--font-cursive), cursive", fontSize: "11px" }}
@@ -45,21 +56,27 @@ export function SiteHeader() {
 
         {/* NAVIGATION (DESKTOP) */}
         <nav className="hidden md:flex items-center gap-7 text-[13px] font-semibold text-stone-600">
-          <Link href="/" className="text-[#c0476b] border-b-2 border-[#c0476b] pb-1">Accueil</Link>
-          <Link href="/prestations" className="hover:text-[#c0476b] transition">Nos services</Link>
-          <Link href="/tarifs" className="hover:text-[#c0476b] transition">Tarifs</Link>
-          <Link href="/boutique" className="flex items-center gap-1.5 hover:text-[#c0476b] transition">
-            <ShoppingBag className="h-3.5 w-3.5" />
-            Boutique
-          </Link>
-          <Link href="/a-propos" className="hover:text-[#c0476b] transition">À propos</Link>
-          <Link href="/galerie" className="hover:text-[#c0476b] transition">Galerie</Link>
-          <Link href="/contact" className="text-stone-900 font-bold transition hover:text-[#c0476b]">Contact</Link>
+          {navLinks.map((link) => {
+            const active = isActive(link.href, link.exact ?? false);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center gap-1.5 transition pb-0.5 ${
+                  active
+                    ? "text-[#c0476b] border-b-2 border-[#c0476b]"
+                    : "hover:text-[#c0476b] border-b-2 border-transparent"
+                }`}
+              >
+                {link.icon && <ShoppingBag className="h-3.5 w-3.5" />}
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* CTA BUTTON */}
         <div className="flex items-center gap-3">
-          {/* Icône panier si articles */}
           {itemCount > 0 && (
             <Link href="/panier" className="relative flex items-center justify-center h-10 w-10 rounded-full border border-[#f0dde6] text-stone-700 hover:border-[#c0476b] transition">
               <ShoppingBag className="h-4 w-4" />

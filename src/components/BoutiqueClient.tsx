@@ -27,8 +27,8 @@ export function BoutiqueClient({ initialProducts, initialCategories, initialCat 
     return matchCat && matchSearch;
   });
 
-  if (sort === "price-asc") filtered = [...filtered].sort((a, b) => a.priceUsdCents - b.priceUsdCents);
-  if (sort === "price-desc") filtered = [...filtered].sort((a, b) => b.priceUsdCents - a.priceUsdCents);
+  if (sort === "price-asc") filtered = [...filtered].sort((a, b) => a.priceCents - b.priceCents);
+  if (sort === "price-desc") filtered = [...filtered].sort((a, b) => b.priceCents - a.priceCents);
 
   return (
     <>

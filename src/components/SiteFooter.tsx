@@ -94,8 +94,8 @@ export function SiteFooter() {
 
         </div>
       </div>
-      <div className="border-t border-[#2a1c15] bg-[#1a120e] py-4 text-center text-[9px] text-[#8c7a6e]">
-        © 2026 Divay Beauty. Tous droits réservés.
+      <div className="border-t border-[#2a1c15] bg-[#110908] py-5 text-center text-[9px] uppercase tracking-[0.3em] text-[#8c7a6e] font-medium">
+        &copy; 2026 DIVAY BEAUTY &mdash; TOUS DROITS RÉSERVÉS
       </div>
     </footer>
   );

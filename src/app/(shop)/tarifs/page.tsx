@@ -61,6 +61,7 @@ const pricingCategories = [
 
 const packages = [
   {
+    slug: "detente",
     name: "Forfait Détente",
     price: "35 000 FC",
     desc: "Un moment de pur bien-être",
@@ -68,6 +69,7 @@ const packages = [
     features: ["Manucure classique", "Pédicure classique", "Masque visage", "Vernis offert"],
   },
   {
+    slug: "glamour",
     name: "Forfait Glamour",
     price: "65 000 FC",
     desc: "Pour briller en toute occasion",
@@ -75,6 +77,7 @@ const packages = [
     features: ["Maquillage soirée", "Pose gel mains", "Pédicure spa", "Soin hydratant visage"],
   },
   {
+    slug: "mariee",
     name: "Forfait Mariée",
     price: "120 000 FC",
     desc: "Le grand jour mérite le meilleur",
@@ -140,14 +143,14 @@ export default function TarifsPage() {
                 ))}
               </ul>
               <Link
-                href="/reservation"
+                href={`/reservation?forfait=${pkg.slug}`}
                 className={`mt-8 flex items-center justify-center gap-2 rounded-full px-6 py-3 text-xs font-bold uppercase tracking-wider transition ${
                   pkg.highlight
                     ? "bg-white text-[#c0476b] hover:bg-[#fff0f4]"
                     : "bg-[#c0476b] text-white hover:bg-[#9e3457]"
                 }`}
               >
-                <Calendar className="h-4 w-4" /> Réserver
+                <Calendar className="h-4 w-4" /> Réserver ce forfait
               </Link>
             </div>
           ))}

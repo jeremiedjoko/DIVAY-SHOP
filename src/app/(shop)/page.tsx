@@ -65,7 +65,7 @@ export default async function ShopPage() {
               { icon: <Leaf className="h-3 w-3 text-[#d4799a]" />, label: "Soins du visage" },
               { icon: <Flower2 className="h-3 w-3 text-[#d4799a]" />, label: "Beauté & Bien-être" },
             ].map((item, i) => (
-              <span key={i} className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 backdrop-blur-sm">
+              <span key={i} className="flex items-center gap-2 rounded-full bg-black/40 border border-white/30 px-4 py-1.5 backdrop-blur-sm">
                 {item.icon} {item.label}
               </span>
             ))}
