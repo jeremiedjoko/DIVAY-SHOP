@@ -20,12 +20,16 @@ type CartState = {
   clear: () => void;
   totalCents: () => number;
   itemCount: () => number;
+  checkoutSession: CartItem[] | null;
+  setCheckoutSession: (items: CartItem[] | null) => void;
 };
 
 export const useCart = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      checkoutSession: null,
+      setCheckoutSession: (items) => set({ checkoutSession: items }),
       addItem: (item, quantity = 1) => {
         set((state) => {
           const existing = state.items.find((i) => i.productId === item.productId);

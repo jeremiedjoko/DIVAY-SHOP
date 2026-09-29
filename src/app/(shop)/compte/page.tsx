@@ -170,7 +170,7 @@ export default function ComptePage() {
                         {statusLabel}
                       </span>
                       <span className="text-sm font-bold text-stone-900">
-                        {formatMoney(order.totalMinor, order.currency)}
+                       {formatMoney(order.totalMinor ?? order.totalCents)}
                       </span>
                     </div>
                   </div>
@@ -184,7 +184,7 @@ export default function ComptePage() {
                           <span className="ml-2 text-stone-400">×{line.quantity}</span>
                         </span>
                         <span className="font-semibold text-stone-900">
-                          {formatMoney(line.unitMinor * line.quantity, order.currency)}
+                          {formatMoney((line.unitMinor ?? line.priceCents) * line.quantity)}
                         </span>
                       </li>
                     ))}

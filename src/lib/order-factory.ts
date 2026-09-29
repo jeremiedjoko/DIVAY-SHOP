@@ -13,7 +13,7 @@ export async function buildOrderFromCart(input: {
   userId?: string;
   stripeSessionId?: string;
 }): Promise<{ order: Order } | { error: string }> {
-  const resolved = await resolveCartLines(input.items, input.currency);
+  const resolved = await resolveCartLines(input.items);
   if ("error" in resolved) return { error: resolved.error };
 
   const now = new Date().toISOString();
@@ -26,7 +26,8 @@ export async function buildOrderFromCart(input: {
     customer: input.customer,
     lines: resolved.lines,
     currency: input.currency,
-    totalMinor: resolved.totalMinor,
+    totalCents: resolved.totalCents,
+    totalMinor: resolved.totalCents,
     userId: input.userId,
     stripeSessionId: input.stripeSessionId,
   };

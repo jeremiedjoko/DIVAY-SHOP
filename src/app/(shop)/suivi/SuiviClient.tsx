@@ -185,7 +185,7 @@ export default function SuiviClient({ initialOrder = "" }: { initialOrder?: stri
               </div>
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>{formatMoney(order.totalMinor, order.currency)}</span>
+                <span>{formatMoney(order.totalMinor ?? order.totalCents)}</span>
               </div>
             </div>
 
@@ -199,7 +199,7 @@ export default function SuiviClient({ initialOrder = "" }: { initialOrder?: stri
                       {line.name}{" "}
                       <span className="text-stone-400">×{line.quantity}</span>
                     </span>
-                    <span>{formatMoney(line.unitMinor * line.quantity, order.currency)}</span>
+                <span>{formatMoney((line.unitMinor ?? line.priceCents) * line.quantity)}</span>
                   </li>
                 ))}
               </ul>

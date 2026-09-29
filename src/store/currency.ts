@@ -1,11 +1,12 @@
 import { create } from "zustand";
+import type { ShopCurrency } from "@/lib/currency";
 
 interface CurrencyState {
-  currency: "USD" | "FC";
-  setCurrency: (c: "USD" | "FC") => void;
+  currency: ShopCurrency;
+  setCurrency: (c: ShopCurrency) => void;
 }
 
 export const useCurrency = create<CurrencyState>((set) => ({
-  currency: "USD",
+  currency: "CDF",
   setCurrency: (currency) => set({ currency }),
 }));

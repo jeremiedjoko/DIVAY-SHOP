@@ -93,7 +93,7 @@ function CommandeForm() {
         </p>
       )}
       <p className="mt-2 text-stone-600">
-        Total ({currency === "USD" ? "dollars" : "francs congolais"}) : <CartTotal overrideItems={isExpress ? items : undefined} />
+        Total ({currency === "USD" ? "dollars" : "francs congolais"}) : <span>{((items.reduce((sum, item) => sum + (item.priceCents * item.quantity), 0)) / 100).toLocaleString("fr-FR")} FC</span>
       </p>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-6">
