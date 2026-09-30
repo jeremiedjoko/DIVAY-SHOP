@@ -48,6 +48,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Panier expiré ou déjà traité." }, { status: 410 });
   }
 
+  if (!pending.currency || !pending.customer) {
+    return NextResponse.json({ error: "Données de commande incomplètes." }, { status: 400 });
+  }
+
   const built = await buildOrderFromCart({
     paymentMethod: "card",
     status: "paid",
