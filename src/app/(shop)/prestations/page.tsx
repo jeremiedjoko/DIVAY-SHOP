@@ -1,10 +1,16 @@
 import Link from "next/link";
+import { SERVICES, reservationHref } from "@/lib/services-catalog";
 import { Calendar, Sparkles, Heart, Leaf, Flower2, Diamond, Clock, ChevronRight } from "lucide-react";
 
 export const metadata = {
   title: "Nos Services — Divay Beauty",
   description: "Découvrez toutes nos prestations beauté : makeup, manucure, soins du visage et bien-être.",
 };
+
+const NAME_ALIAS: Record<string, string> = { "Soin gommage pieds": "gommage-pieds" };
+function slugFor(name: string) {
+  return NAME_ALIAS[name] ?? SERVICES.find((s) => s.name === name)?.slug;
+}
 
 const categories = [
   {
@@ -132,7 +138,7 @@ export default function PrestationsPage() {
                       <div className="flex items-center gap-4">
                         <span className="text-sm font-bold text-[#c0476b]">{svc.price}</span>
                         <Link
-                          href="/reservation"
+                          href={reservationHref({ service: slugFor(svc.name) })}
                           className="rounded-full bg-[#c0476b] px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-[#9e3457]"
                         >
                           Réserver

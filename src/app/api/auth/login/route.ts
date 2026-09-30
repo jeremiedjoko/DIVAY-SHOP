@@ -1,20 +1,31 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users, userRoles, roles } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { createSession } from '@/lib/session';
+import { clientIp, rateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const body = await req.json();
+    const email = String(body.email ?? '').trim().toLowerCase();
+    const password = String(body.password ?? '');
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Email et mot de passe requis' }, { status: 400 });
     }
 
+    const limit = rateLimit(`login:${clientIp(req)}:${email}`);
+    if (!limit.ok) {
+      return NextResponse.json(
+        { error: `Trop de tentatives. Réessayez dans ${Math.ceil(limit.retryAfterSec / 60)} minute(s).` },
+        { status: 429, headers: { 'Retry-After': String(limit.retryAfterSec) } },
+      );
+    }
+
     // Chercher l'utilisateur
-    const userList = await db.select().from(users).where(eq(users.email, email));
+    const userList = await db.select().from(users).where(eq(sql`lower(${users.email})`, email));
     if (userList.length === 0) {
       return NextResponse.json({ error: 'Identifiants incorrects' }, { status: 401 });
     }

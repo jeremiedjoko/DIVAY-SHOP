@@ -54,6 +54,7 @@ export type PendingCheckout = {
 
 export type Order = {
   id: string;
+  orderNumber?: string;
   createdAt: string;
   updatedAt?: string;
   paymentMethod: PaymentMethod;

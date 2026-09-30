@@ -8,7 +8,7 @@ export default async function ShopPage() {
     { title: "Makeup", desc: "Maquillage naturel, soirée, cérémonie, mariage...", img: "/bank/pexels-eyeboll-studios-3088642-4684193.jpg", icon: <Sparkles className="h-5 w-5 text-[#c0476b]" />, slug: "makeup" },
     { title: "Manucure", desc: "Beauté des mains, pose de vernis, gel, nail art...", img: "/bank/pexels-rdne-7755287.jpg", icon: <Heart className="h-5 w-5 text-[#c0476b]" />, slug: "manucure" },
     { title: "Pédicure", desc: "Soin des pieds, pédicure esthétique, finition parfaite...", img: "/bank/OIP.webp", icon: <Flower2 className="h-5 w-5 text-[#c0476b]" />, slug: "pedicure" },
-    { title: "Soins du visage", desc: "Nettoyage, hydratation, soins personnalisés...", img: "/bank/596f4bbc50080-soins-visage-african-lady-togo.jpg", icon: <Leaf className="h-5 w-5 text-[#c0476b]" />, slug: "soins-visage" },
+    { title: "Soins du visage", desc: "Nettoyage, hydratation, soins personnalisés...", img: "/bank/596f4bbc50080-soins-visage-african-lady-togo.jpg", icon: <Leaf className="h-5 w-5 text-[#c0476b]" />, slug: "visage" },
     { title: "Bien-être", desc: "Épilation, gommage, modelage et bien plus encore...", img: "/bank/pexels-sora-shimazaki-5938278.jpg", icon: <Diamond className="h-5 w-5 text-[#c0476b]" />, slug: "bien-etre" },
   ];
 
@@ -113,7 +113,7 @@ export default async function ShopPage() {
                 <div className="flex flex-1 flex-col items-center px-3 pt-4 text-center">
                   <h3 className="font-serif text-lg font-bold text-[#2a1c15]">{s.title}</h3>
                   <p className="mt-2 text-[10px] leading-relaxed text-stone-500 px-2">{s.desc}</p>
-                  <Link href="/reservation" className="mt-auto pt-5">
+                  <Link href={`/reservation?categorie=${s.slug}`} className="mt-auto pt-5">
                     <span className="rounded-full bg-[#c0476b] px-5 py-2 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-[#9e3457]">
                       Découvrir →
                     </span>

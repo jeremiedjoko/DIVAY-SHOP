@@ -185,6 +185,7 @@ export const orders = sqliteTable('orders', {
   shippingAddress: text('shipping_address').notNull(),
   shippingCity: text('shipping_city').notNull(),
   
+  stripeSessionId: text('stripe_session_id'),
   trackingNote: text('tracking_note'), // "Colis remis au livreur..."
   
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
@@ -209,3 +210,22 @@ export const orderLinesRelations = relations(orderLines, ({ one }) => ({
   order: one(orders, { fields: [orderLines.orderId], references: [orders.id] }),
   product: one(products, { fields: [orderLines.productId], references: [products.id] }),
 }));
+
+// ─── RENDEZ-VOUS (RÉSERVATIONS DE PRESTATIONS) ─────────────────────────────
+export const appointments = sqliteTable('appointments', {
+  id: text('id').primaryKey(),
+  reference: text('reference').unique().notNull(), // ex: RDV-7K2F
+  userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
+  serviceSlug: text('service_slug').notNull(),
+  serviceName: text('service_name').notNull(), // snapshot
+  priceFc: integer('price_fc').notNull(), // snapshot
+  date: text('date').notNull(), // YYYY-MM-DD
+  time: text('time').notNull(), // HH:MM
+  name: text('name').notNull(),
+  phone: text('phone').notNull(),
+  email: text('email'),
+  notes: text('notes'),
+  status: text('status').default('PENDING').notNull(), // PENDING | CONFIRMED | DONE | CANCELLED
+  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).default(sql`(unixepoch())`).notNull(),
+});

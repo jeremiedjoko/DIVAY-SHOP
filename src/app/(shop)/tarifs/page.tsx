@@ -1,10 +1,15 @@
 import Link from "next/link";
+import { SERVICES, reservationHref } from "@/lib/services-catalog";
 import { Calendar, Check, ChevronRight } from "lucide-react";
 
 export const metadata = {
   title: "Tarifs — Divay Beauty",
   description: "Tous les tarifs de nos prestations beauté : makeup, manucure, soins du visage et bien-être.",
 };
+
+function slugFor(name: string) {
+  return SERVICES.find((s) => s.name === name)?.slug;
+}
 
 const pricingCategories = [
   {
@@ -143,7 +148,7 @@ export default function TarifsPage() {
                 ))}
               </ul>
               <Link
-                href={`/reservation?forfait=${pkg.slug}`}
+                href={reservationHref({ service: pkg.slug })}
                 className={`mt-8 flex items-center justify-center gap-2 rounded-full px-6 py-3 text-xs font-bold uppercase tracking-wider transition ${
                   pkg.highlight
                     ? "bg-white text-[#c0476b] hover:bg-[#fff0f4]"
@@ -177,7 +182,16 @@ export default function TarifsPage() {
                         <p className="text-xs font-semibold text-[#2a1c15]">{item.name}</p>
                         <p className="text-[10px] text-stone-400">{item.duration}</p>
                       </div>
-                      <span className="text-sm font-bold text-[#c0476b]">{item.price}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-[#c0476b]">{item.price}</span>
+                        <Link
+                          href={reservationHref({ service: slugFor(item.name) })}
+                          aria-label={`Réserver ${item.name}`}
+                          className="rounded-full border border-[#c0476b] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#c0476b] transition hover:bg-[#c0476b] hover:text-white"
+                        >
+                          Réserver
+                        </Link>
+                      </div>
                     </div>
                   ))}
                 </div>

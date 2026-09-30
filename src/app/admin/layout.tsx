@@ -14,16 +14,18 @@ import {
   Menu,
   X,
   Images,
+  CalendarDays,
 } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
   { name: "Tableau de bord", href: "/admin", icon: LayoutDashboard, exact: true },
   { name: "Commandes", href: "/admin/commandes", icon: ShoppingBag, exact: false },
+  { name: "Rendez-vous", href: "/admin/reservations", icon: CalendarDays, exact: false },
   { name: "Catalogue", href: "/admin/catalogue", icon: Package, exact: false },
   { name: "Médias", href: "/admin/medias", icon: Images, exact: false },
   { name: "Promotions", href: "/admin/promotions", icon: Tag, exact: false },
-  { name: "Clients", href: "/admin/clients", icon: Users, exact: false },
+  { name: "Clientes", href: "/admin/clients", icon: Users, exact: false },
   { name: "Rapports & CA", href: "/admin/rapports", icon: BarChart3, exact: false },
 ];
 
@@ -41,7 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return item.exact ? pathname === item.href : pathname.startsWith(item.href);
   }
 
-  const Sidebar = () => (
+  const sidebar = (
     <div className="flex h-full flex-col bg-[#0f0f0f] text-white">
       {/* Logo */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
@@ -98,7 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="flex h-screen bg-stone-100 overflow-hidden">
       {/* Sidebar Desktop */}
       <aside className="hidden lg:flex lg:w-60 xl:w-64 shrink-0 flex-col">
-        <Sidebar />
+        {sidebar}
       </aside>
 
       {/* Sidebar Mobile Overlay */}
@@ -113,7 +115,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           sidebarOpen ? "flex translate-x-0" : "-translate-x-full"
         }`}
       >
-        <Sidebar />
+        {sidebar}
       </aside>
 
       {/* Main Content */}
@@ -131,7 +133,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               DIVAY BEAUTY
             </span>
             <span className="h-4 w-px bg-stone-200" />
-            <span className="text-xs text-stone-500">CEO</span>
+            <span className="text-xs text-stone-500">Administration</span>
           </div>
         </header>
 

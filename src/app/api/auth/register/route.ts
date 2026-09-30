@@ -8,7 +8,7 @@ import { randomUUID } from 'crypto';
 
 export async function POST(req: Request) {
   try {
-    const { email, password, name } = await req.json();
+    const { email, password, name, phone } = await req.json();
 
     if (!email || !password || !name) {
       return NextResponse.json({ error: 'Tous les champs sont requis' }, { status: 400 });
@@ -29,6 +29,7 @@ export async function POST(req: Request) {
       id: userId,
       email,
       name,
+      phone: phone || null,
       passwordHash: hashedPassword,
     });
 

@@ -1,7 +1,13 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 
-const secretKey = process.env.SESSION_SECRET || 'super-secret-key-replace-in-prod';
+const secretKey = process.env.SESSION_SECRET ?? (process.env.NODE_ENV === 'production' ? '' : 'dev-only-secret-not-for-production');
+if (!secretKey || secretKey.length < 32) {
+  if (process.env.NODE_ENV === 'production') {
+    // Sans secret solide, n'importe qui pourrait forger un cookie administrateur : on refuse de démarrer.
+    throw new Error('SESSION_SECRET manquant ou trop court (32 caractères minimum).');
+  }
+}
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export type SessionPayload = {

@@ -3,6 +3,7 @@ import { resolveCartLines } from "@/lib/cart-server";
 import { saveOrder } from "@/lib/orders";
 import type { Order } from "@/lib/types";
 import { checkoutBodySchema } from "@/lib/validation";
+import { getSession } from "@/lib/session";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -22,14 +23,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: resolved.error }, { status: 400 });
   }
 
+  const session = await getSession();
+  const now = new Date().toISOString();
   const order: Order = {
     id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
+    createdAt: now,
+    updatedAt: now,
+    userId: session?.userId,
+    currency: "CDF",
     paymentMethod: "cod",
     status: "pending",
     customer: parsed.data.customer,
     lines: resolved.lines,
     totalCents: resolved.totalCents,
+    totalMinor: resolved.totalCents,
   };
 
   await saveOrder(order);

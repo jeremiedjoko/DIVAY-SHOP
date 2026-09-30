@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# NB : sqlite.db reste versionné tant que la base n'est pas migrée vers un
+# hébergement persistant (Turso/Supabase) : le déploiement en dépend pour ses tables.
+
+# fichiers sensibles / lourds servis publiquement par erreur
+public/bank/*.zip
+public/bank/quittance-*.pdf

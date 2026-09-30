@@ -20,15 +20,15 @@ const greatVibes = Great_Vibes({
   subsets: ["latin"],
 });
 
-const shopName = process.env.NEXT_PUBLIC_SHOP_NAME ?? "L'Écrin";
+const shopName = process.env.NEXT_PUBLIC_SHOP_NAME ?? "DIVAY BEAUTY";
 
 export const metadata: Metadata = {
   title: {
-    default: `${shopName} — Boutique en ligne`,
+    default: `${shopName} — Salon de beauté & boutique artisanale`,
     template: `%s · ${shopName}`,
   },
   description:
-    "Boutique en ligne élégante : accessoires, maison et bijoux. Paiement sécurisé ou à la livraison.",
+    "Soins de beauté (makeup, manucure, pédicure, soins du visage) et créations artisanales. Réservez en ligne, payez à la livraison.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
