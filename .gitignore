@@ -46,3 +46,5 @@ next-env.d.ts
 # fichiers sensibles / lourds servis publiquement par erreur
 public/bank/*.zip
 public/bank/quittance-*.pdf
+
+this-is-divay-shop/
